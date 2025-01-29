@@ -1,0 +1,87 @@
+# Install Jenkins on Ubuntu
+==================================================
+$ sudo apt-get update
+$ sudo apt-get upgrade
+$ sudo apt install fontconfig openjdk-17-jre
+$ java -version
+$ sudo wget -O /usr/share/keyrings/jenkins-keyring.asc https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+$ echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc]" https://pkg.jenkins.io/debian-stable binary/ | sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null
+$ sudo apt-get update
+$ sudo apt-get install jenkins
+$ systemctl status jenkins
+==================================================
+=> Open 8080 port from your security group
+=> Browse <public-dns>:8080
+=> $ sudo cat /var/jenkins_home/secrets/initialAdminPassword
+=> Click Install suggested plugins
+=> Once the installation is complete, the Create First Admin User will open. Enter your information, and then select Save and Continue.
+==================================================
+# Set JAVA_HOME PATH
+==================================================
+$ cd /usr/lib/jvm/
+$ echo $PATH
+$ export JAVA_HOME=/usr/lib/jvm/java-1.17.0-openjdk-amd64
+$ export PATH=$PATH:$JAVA_HOME/bin
+$ echo $PATH
+==================================================
+# Set Git_webhook trigger
+==================================================
+=> Go to GitHub repo and navigate to Settings-> Webhooks-> Add Webhook->
+   Payload URL: http://<public_dns>:8080/github-webhook/
+   Content type: application/json
+   SSL verification: Enable
+   Which events would you like to trigger this webhook?: Just the push event.
+   tick Active
+   Add webhook
+==================================================
+# MASTER-SLAVE Architecture
+==================================================
+=> Launch Slave server
+=> Connect the Slave Server
+=> $ sudo apt-get update
+   $ sudo apt-get upgrade
+   $ sudo apt install fontconfig openjdk-17-jre
+   $ java -version
+=> 1: Establish connection between Master And Slave
+     1.1: Create Password LESS SSH
+     => In MASTER
+        $ ssh-keygen -t rsa
+        $ cd .ssh
+        $ ls
+        $ cat id_rsa.pub
+        <copy_the_key>
+     => In SLAVE 
+        $ cd .ssh
+        $ ls
+        $ nano authorized_keys
+        <paste_the_pb_key> and SAVE
+     => In MASTER
+        $ ssh <slave_machine_pub_IP> ---> if connection established then Password LESS SSH done
+  2: Add this new NODE as SLAVE in Jenkins MASTER
+  => Go to Jenkins Dashboard
+  => Manage Jenkins
+  => Nodes
+  => +New Node
+  => Name: MySlave
+     Permanent Agent
+     Create
+  => Name: MySlave
+     Description: MySlave
+     Number of Executor: 1
+     Remote root directory: /tmp
+     Lables: TeamA_Slave
+     Usage: as much as possible
+     Launch method: Launch agents via SSH
+                    Host: <Slave_pub_IP>
+     		    Credentials: +Add
+                                 Kind: SSH username with pvt key
+                                 ID: ubuntu_key
+                                 Username: ubuntu
+                                 Private key
+                                   Enter directly
+                                   <paste_pvt_key_of_MASTER_machine>
+                    Host key verification Strategy: Non verifying verification strategy
+                    Availability: online as much as possible
+  => SAVE
+=> Go to MySlave LOG to check whether SLAVE got connected or not
+================================================== 
