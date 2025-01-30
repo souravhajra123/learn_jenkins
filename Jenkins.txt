@@ -12,7 +12,7 @@ $ systemctl status jenkins
 ==================================================
 => Open 8080 port from your security group
 => Browse <public-dns>:8080
-=> $ sudo cat /var/jenkins_home/secrets/initialAdminPassword
+=> $ sudo cat /var/jenkins_home/secrets/initialAdminPassword -----> use this as initial Password
 => Click Install suggested plugins
 => Once the installation is complete, the Create First Admin User will open. Enter your information, and then select Save and Continue.
 ==================================================
@@ -57,7 +57,7 @@ $ echo $PATH
         <paste_the_pb_key> and SAVE
      => In MASTER
         $ ssh <slave_machine_pub_IP> ---> if connection established then Password LESS SSH done
-  2: Add this new NODE as SLAVE in Jenkins MASTER
+  2: Add SLAVE NODE as SLAVE in Jenkins MASTER Dashboard
   => Go to Jenkins Dashboard
   => Manage Jenkins
   => Nodes
@@ -72,11 +72,11 @@ $ echo $PATH
      Lables: TeamA_Slave
      Usage: as much as possible
      Launch method: Launch agents via SSH
-                    Host: <Slave_pub_IP>
+                    Host: <Slave_pvt_IP>
      		    Credentials: +Add
                                  Kind: SSH username with pvt key
-                                 ID: ubuntu_key
-                                 Username: ubuntu
+                                 ID: ubuntu_key(any_name)
+                                 Username: ubuntu(check_your_machine's_username_from_cloud_console)
                                  Private key
                                    Enter directly
                                    <paste_pvt_key_of_MASTER_machine>
@@ -84,4 +84,4 @@ $ echo $PATH
                     Availability: online as much as possible
   => SAVE
 => Go to MySlave LOG to check whether SLAVE got connected or not
-================================================== 
+==================================================
